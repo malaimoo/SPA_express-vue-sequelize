@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "buildvue":"node src/client/build/build.js"
   },
   "author": "Shunyang Li",
   "license": "MIT",

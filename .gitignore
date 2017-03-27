@@ -19,3 +19,5 @@ _thumbs/
 */expressionengine/cache/*
 
 node_modules
+.idea
+
