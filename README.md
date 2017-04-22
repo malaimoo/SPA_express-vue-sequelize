@@ -1,4 +1,4 @@
-# SPA_express-vue-mongodb
+# SPA_express-vue-sequelize
 a SPA project all use javascript lang.
 
 
