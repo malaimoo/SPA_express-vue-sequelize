@@ -1,7 +1,7 @@
 import Qs from 'qs'
 
 export default{
-  baseURL: 'http://localhost:3000/',
+  baseURL: 'http://localhost:8888/',
   method: 'GET',
   transformRequest: [
     function(data) {

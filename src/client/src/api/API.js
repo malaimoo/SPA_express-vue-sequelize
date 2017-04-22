@@ -11,6 +11,10 @@ export default {
       config.url = 'users';
       http.get(param, config, success, error);
     },
+    createuser(param, success, error){
+      config.url = 'users/create';
+      http.get(param, config, success, error);
+    },
   },
 
 }

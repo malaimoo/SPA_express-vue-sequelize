@@ -159,6 +159,101 @@ index: path.resolve(__dirname, '../../server/public/index.ejs'),
 
 
 
+### 6. 添加sequelizejs ORM
+数据库这一块本来是想用 mongodb 的，觉得直接写数据库操作可能太麻烦了（关键是不会。。），所以直接引用一个 ORM 框架吧，支持 sqllite myql 等数据库。
+
+调试的时候需要开启一个 mysql 数据库，我们的 express 服务端才能链接到该数据库。
+在 [mysql官网](https://www.mysql.com/downloads/) 下载，并且下载一个可视化的管理端 MySQL Workbench。最后我们在 127.0.0.1:3306 上开启了一个数据库。
+
+在 models 文件夹下新建一个 user.js 文件。进行 sequelizejs 模型的创建和数据库的链接。
+
+```
+// server/models/user.js
+var Sequelize = require('sequelize');
+var sequelize = new Sequelize(
+    'sys',    //数据库名
+    'root',             //用户名
+    'xiaocai',             //密码
+    {
+        'dialect': 'mysql',
+        'host': 'localhost',
+        'port': 3306
+    }
+);
+
+//定义表的模型
+var Message = sequelize.define('user', {
+    id:{ //自增长id,主键,整形
+        type:Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement:true
+    },
+    username: { //谁留的言
+        type: Sequelize.STRING(300)
+    },
+    password: { //留言的内容
+        type: Sequelize.STRING(300)
+    }
+});
+Message.sync(); //创建表
+
+module.exports = Message;
+```
+
+这样我们在 router 的users.js 里添加两个接口，一个是创建，一个是查询。
+```
+var express = require('express');
+var router = express.Router();
+var user = require('../models/user');
+
+/* GET users listing. */
+router.get('/', function(req, res, next) {
+    //如果没有id或者id为空,直接返回
+    if (req.query.username == undefined ||req.query.username== ''
+        || req.query.password == undefined || req.query.password == '') {
+        res.json({status:-1, statusMsg:'参数错误'});
+        return;
+    }
+    user.findOne({
+        where:{
+            username:req.query.username
+        }
+    }).then(function(user){
+        if (user.password == req.query.password){
+            res.json({status:1});
+        }else {
+            res.json({status:-1,statusMsg:'密码错误'});
+        }
+    }).catch(function (error) {
+        res.json(error)
+    });
+});
+
+
+router.get('/create',function (req,res,next) {
+    //如果没有post数据或者数据为空,直接返回
+    if (req.query.username == undefined ||req.query.username== ''
+        || req.query.password == undefined || req.query.password == '') {
+        res.json({status:-1, statusMsg:'参数错误'});
+        return;
+    }
+    var message = {
+        username: req.query.username,
+        password: req.query.password
+    };
+    //创建一条记录,创建成功后跳转回首页
+    user.create(message).then(function(msg){
+        res.json({status:1});
+    });
+});
+
+
+module.exports = router;
+
+```
+
+在 vue 里面就可以创建和查询用户了。我这里把它模拟成了注册（创建）登录（查询）
+
 
 ### 5. 使用 build 完成之后的项目进行测试
 
@@ -174,3 +269,7 @@ app.use('/', index);
 ```
 
 意思就是/ 根请求就访问 index.ejs。就是我们打包的 vue 工程。
+
+
+
+

@@ -20,6 +20,7 @@ export default {
       }else{
         console.log(res.data.statusMsg);
         error(res.data);
+        alert(res.data.statusMsg)
       }
     }).catch(function (errors) {
       _this.config.isloading = false;
